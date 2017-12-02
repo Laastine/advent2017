@@ -31,10 +31,8 @@ let calculateValueB(inputList: List<int>): int =
     | head::tail ->
           let index = inputList.Length - tail.Length - 1
           let idx =
-            if tail.Length = 0 then
-              div - 1
+            if tail.Length = 0 then div - 1
             else calcIndex(index+div, inputList.Length)
-          printfn "IDX=%A, idx+%A=%A | head:%A = val:%A => %A" index div idx head inputList.[idx] acc
           if head = inputList.[idx] then
             // printfn "A: %A = %A" head inputList.[idx]
             recur(tail, acc+head)
@@ -43,22 +41,10 @@ let calculateValueB(inputList: List<int>): int =
 
 let calc: int =
   inputFileToList "./input.txt"
-  // ["1";"2";"3";"1";"2";"3"]
-  // ["1";"2";"1";"2"]
-  // ["1";"1";"1";"1"]
-  // ["1";"2";"3";"4"]
-  // ["1";"2";"1";"3";"1";"4";"1";"5";"1";"1"]
     |> List.collect explode
     |> calculateValueB
-//986-967=19
+
 [<EntryPoint>]
 let main argv =
-
-    // assert (["1";"2";"2";"1"] |> List.collect explode |> calculateValueB = 0)
-    // assert (["1";"2";"2";"4";"2";"5"] |> List.collect explode |> calculateValueB = 4)
-    // assert (["1";"2";"3";"1";"2";"3"] |> List.collect explode |> calculateValueB = 12)
-    // assert (["1";"2";"1";"3";"1";"4";"1";"5"] |> List.collect explode |> calculateValueB = 4)
-
-
     printfn "%A" calc
     0
