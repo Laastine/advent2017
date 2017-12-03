@@ -17,9 +17,15 @@ let Spiral n =
   rangeC |> Seq.iteri (fun idx x -> square.[x,x] <- (rangeCval.[idx]) * (rangeCval.[idx]))
   square
 
-// let indexes = Spiral 603 |>
+let nth = 603
+let spiral = Spiral nth
+
+let range = [(nth-1)..(-1)..0]
+
+for x in range do
+  for y in range do
+    if spiral.[x,y] = 361527 then printfn "found: %A,%A => %A" x y (Math.Abs((nth-1)/2-x) + Math.Abs((nth-1)/2-y))
 
 [<EntryPoint>]
 let main argv =
-  printfn "%A" (Spiral 9)
   0 // return an integer exit code
