@@ -27,7 +27,6 @@ let distribtuteVal(value: int, currIdx: int, list: List<int>): List<int> =
                               |> Seq.countBy id
                               |> Seq.sortBy (fun x -> (fst x))
                               |> Seq.toList
-
   List.mapi (fun i x ->
                       let valList = vals |> List.tryFind (fun e -> (fst e) = i)
                       let (idx, v) = if valList.IsSome then valList.Value else (i, 0)
@@ -54,15 +53,18 @@ let calcA(inputList: List<int>): int =
     else recur(newInput, maxValIdx(newInput), newAcc)
   recur(inputList, maxValIdx(inputList), [])
 
+let calcB(inputList: List<int>): int =
+  let maxValIdx(list: List<int>): int = list |> List.findIndex ((=)(List.max list))
+  let rec recur(input: List<int>, currIdx: int, acc: List<List<int>>) =
+    // printfn "\n%A\n" (input |> List.mapi (fun i x -> if i = currIdx then (sprintf "(%A)" x) else (sprintf "%A" x)))
+    let newInput = calcDistribution(currIdx, input)
+    let newAcc = newInput::acc
+    if (acc |> List.tryFind (fun x -> areArraysEqual(newInput, x))).IsSome then
+      ((acc |> List.findIndex (fun e -> areArraysEqual(e, newInput))) + 1)
+    else recur(newInput, maxValIdx(newInput), newAcc)
+  recur(inputList, maxValIdx(inputList), [])
+
 [<EntryPoint>]
 let main argv =
-    printfn "%A" (calcA(inputFileToList "./input.txt"))
+    printfn "%A" (calcB(inputFileToList "./input.txt"))
     0
-
-
-// 0 2 7 0
-// 2 4 1 2
-// 3 1 2 3
-// 0 2 3 4
-// 1 3 4 1
-// 2 4 1 2
