@@ -47,7 +47,6 @@ let getValue(acc: List<string*int>, el: string): int =
     let someFound = acc |> List.tryFind (fun x -> el = (fst x))
     if someFound.IsSome then (snd someFound.Value) else 0
 
-
 let setRegisterValue(acc: List<string*int>, el: string, value: int): List<string*int> =
   let someFound = acc |> List.tryFind (fun x -> el = (fst x))
   if someFound.IsSome then
@@ -72,18 +71,40 @@ let insertVariableToList(inputList: List<Element>): List<string*int> =
           recur(tail, newAcc)
   recur(inputList, [])
 
+let getHighestValue(inputList: List<Element>): string*int =
+  let rec recur(list: List<Element>, acc: List<string*int>, highest: string*int) =
+    match list with
+    | [] -> highest
+    | head::tail ->
+          let (headVariable, operation, value, varA, sign, varB) = head
+          let res = evaluateExpression(getValue(acc, varA), getValue(acc, varB), sign)
+          let newRegVal = evaluateOperation(getValue(acc, headVariable), (int value), operation)
+          let newAcc =
+            if res then
+              setRegisterValue(acc, headVariable, newRegVal)
+            else acc
+          let newHighest =
+            if res && newRegVal > (snd highest) then  (headVariable, newRegVal)
+            else highest
+          recur(tail, newAcc, newHighest)
+  recur(inputList, [], ("",0))
+
 let inputFileToList(fileName: string) =
   System.IO.File.ReadLines(fileName)
     |> Seq.toList
     |> List.map parseLine
 
 
-let calcA(inputList: List<Element>) =
+let calcA(inputList: List<Element>): string*int =
   inputList
     |> insertVariableToList
     |> List.maxBy snd
 
+let calcB(inputList: List<Element>) =
+  inputList |> getHighestValue
+
 [<EntryPoint>]
 let main argv =
-    printfn "%A" (calcA(inputFileToList "./eight.txt"))
-    0
+  printfn "%A" (calcA(inputFileToList "./eight.txt"))
+  printfn "%A" (calcB(inputFileToList "./eight.txt"))
+  0
