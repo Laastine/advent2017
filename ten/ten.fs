@@ -31,6 +31,10 @@ let inputFileToList(fileName: string): List<int> =
     |> Array.toList
     |> List.map int
 
+let toASCIICode(name: string): int =
+  name.ToCharArray()
+    |> Seq.sumBy Convert.ToInt32
+
 [<EntryPoint>]
 let main argv =
   let inputList = inputFileToList "./ten.txt"
