@@ -17,6 +17,10 @@ let sumTuples(a: int*int*int, b: int*int*int): int*int*int =
   let x2,y2,z2 = b
   (x1+x2, y1+y2, z1+z2)
 
+let distanceFromStart(pos: int*int*int): int =
+  let x,y,z = pos
+  (Math.Abs x + Math.Abs y + Math.Abs z) / 2
+
 let calcDistance(inputArray: string[]): int*int*int =
   let startPosition = 0,0,0
   let rec recur(input: List<string>, acc: int*int*int) =
@@ -28,14 +32,28 @@ let calcDistance(inputArray: string[]): int*int*int =
         recur(tail, newAcc)
   recur(inputArray |> Array.toList, startPosition)
 
-let calcA(movement: int*int*int): int =
-  let x,y,z = movement
-  (Math.Abs x + Math.Abs y + Math.Abs z) / 2
+let calcFurthest(inputArray: string[]): int =
+  let startPosition = 0,0,0
+  let rec recur(input: List<string>, acc: int*int*int, furthest: int*int*int) =
+    match input with
+    | [] -> distanceFromStart(furthest)
+    | head::tail ->
+        let movement = updatePosition(head)
+        let newAcc = sumTuples(acc, movement)
+        let newFurthest =
+          if distanceFromStart(newAcc) > distanceFromStart(furthest) then newAcc
+          else  furthest
+        recur(tail, newAcc, newFurthest)
+  recur(inputArray |> Array.toList, startPosition, startPosition)
 
-let inputFileToListB (fileName : string) : string[] =
+let calcA(movement: int*int*int): int = distanceFromStart(movement)
+let calcB(input: string[]): int = calcFurthest(input)
+
+let inputFileToList (fileName : string) : string[] =
   System.IO.File.ReadAllText(fileName).Trim().Split([|','|])
 
 [<EntryPoint>]
 let main argv =
-  printfn "%A" (inputFileToListB "./eleven.txt" |> calcDistance |> calcA)
+  printfn "%A" (inputFileToList "./eleven.txt" |> calcDistance |> calcA)
+  printfn "%A" (inputFileToList "./eleven.txt" |> calcB)
   0
